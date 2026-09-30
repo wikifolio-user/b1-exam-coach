@@ -1,214 +1,139 @@
-# B1 Exam Coach — Phase 2
+# B1 Exam Coach – Phase 2
 
-A focused Streamlit learning app for Cambridge B1 Preliminary preparation.
+Eine funktionsfähige Streamlit-App zur Vorbereitung auf **Cambridge B1 Preliminary**. Englischsprachige Übungen und Rückmeldungen, englisch-deutsche Vokabelkarten und ein persönlicher Lernplan. Alle Übungsaufgaben sind eigenes Material; die App ist kein offizielles Cambridge-Angebot.
 
-The goal is not to be a generic language app. It tracks mistakes, weak topics, Writing practice and daily study recommendations so the learner can train specifically for B1 Preliminary.
+## Funktionen
 
-## Included now
+| Seite | Inhalt |
+| --- | --- |
+| Dashboard | Gespeicherte Antworten, Genauigkeit, Lernserie, fällige Wörter und Tagesplan |
+| Study Plan | Tagesbudget von 5–240 Minuten, adaptive Themenprioritäten, Wiederholung und Writing |
+| Reading | Parts 1–6: kurze Mitteilungen, Zuordnung, Textverständnis, Satzlücken, Multiple-Choice-Cloze und Open Cloze |
+| Grammar | 48 Fragen mit Erklärungen; adaptive Auswahl oder festes Thema |
+| Vocabulary | 56 Karten mit Beispielen und vier Erinnerungsstufen; Wiederholungstermine bleiben gespeichert |
+| Writing | Je zwei Aufgaben für Email, Article und Story; Feedback, Entwürfe und Historie |
+| My Mistakes | Falsche Antworten, Erklärungen und gezieltes erneutes Üben; richtige Wiederholungen lösen Fehler auf |
+| Progress | Aktivität pro Tag, Leistungen pro Thema und Writing-Schätzwerte |
+| Settings | Name, Tagesbudget, Prüfungsdatum, optionale KI und JSON-Datenexport |
 
-- Dashboard with current progress and today's mission
-- Personal adaptive Study Plan
-- Reading Trainer for Parts 1–6
-- Grammar Trainer with adaptive weak-topic selection
-- Vocabulary trainer with simple spaced repetition
-- Writing Trainer for Email, Article and Story
-- Writing feedback using Cambridge-oriented training criteria:
-  - Content
-  - Communicative Achievement
-  - Organisation
-  - Language
-- Offline Writing evaluator that works without an API key
-- Optional OpenAI Writing feedback when `OPENAI_API_KEY` is configured
-- My Mistakes notebook with targeted Reading/Grammar practice
-- Progress charts
-- SQLite by default
-- Optional `DATABASE_URL` support for hosted PostgreSQL
-- GitHub Actions test workflow
-- Original sample exercises rather than copied Cambridge exam items
+Reading enthält **12 vollständige Übungssets mit 64 Fragen**. Parts 2 und 4 verwenden jeweils acht Auswahlmöglichkeiten; Parts 5 und 6 haben jeweils sechs Lücken. Open Cloze akzeptiert die hinterlegten gültigen Alternativen sowie Groß-/Kleinschreibung und äußere Leerzeichen.
 
-Writing scores in this app are training estimates and are not official Cambridge scores.
+Listening, Speaking und vollständige Prüfungssimulationen gehören nicht zu Phase 2.
 
----
+## Lokal starten
 
-# 1. Download and extract
-
-Extract the project and open a terminal inside the `b1-exam-coach` folder.
-
-# 2. Create a Python environment
-
-Recommended: Python 3.12.
-
-Windows PowerShell:
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-```
-
-macOS / Linux:
+Python **3.11 oder 3.12** verwenden. Das Repository herunterladen oder klonen und in den Projektordner wechseln:
 
 ```bash
-python3 -m venv .venv
+git clone https://github.com/wikifolio-user/b1-exam-coach.git
+cd b1-exam-coach
+python -m venv .venv
+```
+
+Umgebung aktivieren:
+
+```bash
+# macOS / Linux
 source .venv/bin/activate
 ```
 
-# 3. Install dependencies
-
-```bash
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+```powershell
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
 ```
 
-# 4. Run tests
+Anschließend:
 
 ```bash
-pytest -q
-```
-
-You should see all tests pass.
-
-# 5. Start the app locally
-
-```bash
+python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Open the local address shown by Streamlit in your browser.
+**`app.py` im Repository-Root ist der Einstiegspunkt.** Die Navigation registriert die Module unter `pages/` ausdrücklich über `st.navigation`. Die SQLite-Datenbank `b1_exam_coach.db` wird beim ersten Start automatisch angelegt. SQLite ist Bestandteil von Python; ein separater Datenbankserver ist nicht nötig.
 
-The SQLite database is created automatically as `b1_exam_coach.db`.
+## Erster Lerndurchlauf
 
-# 6. First test inside the app
+1. In **Settings** Name, Minutenbudget und optional Prüfungsdatum speichern.
+2. In **Grammar** einige Fragen beantworten und alle Reading-Formate ausprobieren.
+3. In **My Mistakes** eine falsche Antwort erneut üben.
+4. In **Vocabulary** Bedeutung aufdecken und Again, Hard, Good oder Easy auswählen.
+5. In **Writing** eine Antwort von ungefähr 100 Wörtern schreiben und Feedback speichern.
+6. **Dashboard**, **Study Plan** und **Progress** öffnen: Sie verwenden jetzt die gespeicherten Ergebnisse.
 
-Use this order:
+Unvollständig beantwortete Reading-Sets werden nicht bewertet. Eine ausgewertete Runde bleibt gesperrt, bis bewusst **Try again** gewählt wird; ein Streamlit-Neuladen zählt die Antwort nicht doppelt.
 
-1. Open **Settings** and enter your name and optional exam date.
-2. Complete 3–5 **Grammar** questions.
-3. Complete Reading questions from at least two different parts.
-4. Open **My Mistakes** and start a targeted weak-topic drill.
-5. Open **Writing**, choose an Email task and write about 100 words.
-6. Open **Study Plan** and check whether the recommendations now react to your results.
-7. Open **Progress** and verify that your attempts and Writing scores appear.
+## SQLite und Datenschutz
 
-# 7. Optional AI Writing feedback
+Die App verwaltet **ein lokales Lernprofil**. Sie ist für persönliche Nutzung ausgelegt und hat keine Anmeldung oder Trennung mehrerer Nutzer. Für mehrere Lernende getrennte Instanzen oder getrennte Datenbankdateien verwenden.
 
-The app works without AI. Start without an API key first.
+Die Datenbank speichert Profil, Antworten, Fehler, Vokabeltermine und Writing-Entwürfe samt Feedback. **Settings → Download learning data** exportiert diese Daten als JSON. Ein Import ist nicht implementiert. API-Keys werden weder in SQLite gespeichert noch exportiert.
 
-For local development, copy `.env.example` to `.env` and add your key:
+Ein anderer Datenbankpfad ist über `B1_DB_PATH` möglich, beispielsweise in einer lokalen `.env`:
 
 ```env
-OPENAI_API_KEY=your-key-here
-OPENAI_MODEL=gpt-5.6-luna
+B1_DB_PATH=/absolute/path/to/persistent/b1_exam_coach.db
 ```
 
-Never commit `.env` or `.streamlit/secrets.toml` to GitHub.
+Der übergeordnete Ordner wird automatisch erstellt. Zum Sichern die App stoppen und die SQLite-Datei kopieren. Datenbankdateien, `.env`, virtuelle Umgebungen und `.streamlit/secrets.toml` werden durch `.gitignore` ausgeschlossen.
 
-The app automatically falls back to the offline evaluator if an AI request fails.
+**Hosting:** Streamlit Community Cloud garantiert keine dauerhafte lokale Dateispeicherung. SQLite dort kann bei Neustart oder Redeployment verloren gehen. Für dauerhafte Lernfortschritte einen Host mit persistentem Datenträger nutzen und `B1_DB_PATH` auf diesen Datenträger setzen. PostgreSQL und `DATABASE_URL` werden in dieser Umsetzung nicht unterstützt.
 
-# 8. Put the project on GitHub
+## Adaptive Lernlogik
 
-Create a new empty GitHub repository, for example:
+Pro Fähigkeit und Thema werden richtige Antworten und Versuche ausgewertet. Die geglättete Beherrschung ist `(richtig + 1) / (Versuche + 2)`; die Schwäche ist `1 − Beherrschung`. Die Grammatik-Auswahl priorisiert schwache Themen, bisher ungeübte Fragen und länger nicht geübte Aufgaben. Kleine Stichproben führen nicht sofort zu vermeintlich perfekter Beherrschung.
 
-`b1-exam-coach`
+Der Study Plan berücksichtigt Schwächen, fällige Vokabeln und bisherige Writing-Praxis. Die Minuten ergeben genau das eingestellte Tagesbudget. Bei einem sehr kleinen Budget sind einzelne Schritte als kurze Wiederholung gedacht; eine vollständige Schreibaufgabe dauert entsprechend länger. Writing-Schätzwerte werden getrennt dargestellt und nicht als objektive Richtig/Falsch-Werte in die Themenbeherrschung eingerechnet. Das Prüfungsdatum dient als Anzeige, nicht als Prognose.
 
-Do not let GitHub create another README if you want the cleanest first push.
+## Vokabelwiederholung
 
-Then run from the project folder:
+Neue Wörter sind sofort fällig. **Again** setzt die Wiederholungsserie zurück; **Hard** verkürzt das Intervall. **Good** und **Easy** verlängern die Intervalle abhängig von bisheriger Erinnerung und Ease-Faktor. Termine sind UTC-basierte Kalendertage. Reviews werden atomar mit dem Lernversuch gespeichert. Die Intervalle sind auf 365 Tage begrenzt.
+
+Die Fortschrittsanzeige interpretiert Again/Hard als noch unsichere Erinnerung und Good/Easy als erfolgreichen Abruf. Es handelt sich um Selbsteinschätzung, nicht um einen objektiven Vokabeltest.
+
+## Writing ohne API-Key
+
+Offline-Feedback funktioniert vollständig lokal. Die vier Trainingskriterien sind **Content**, **Communicative Achievement**, **Organisation** und **Language** (je 0–5). Hinweise berücksichtigen Wortzahl, Aufgaben-Stichwörter, Begrüßung/Abschluss, Titel, Story-Anfang, Absätze, Verknüpfungen und einige häufige Fehler.
+
+**Die Werte sind heuristische Trainingsschätzungen, keine offiziellen Cambridge-Noten.** Stichwörter beweisen nicht, dass ein Aufgabenpunkt inhaltlich erfüllt wurde. Der Offline-Modus kann Bedeutung und grammatische Korrektheit nicht zuverlässig beurteilen. Er liefert deshalb keine erfundene verbesserte Fassung. Die Zielgröße ist ungefähr 100 Wörter, keine angeblich offizielle starre Wortzahlgrenze.
+
+## Optionale OpenAI-Integration
+
+1. `.env.example` nach `.env` kopieren und `OPENAI_API_KEY` lokal setzen, oder den Key in Streamlit-Secrets hinterlegen.
+2. In **Settings** die KI aktivieren und ein für den eigenen OpenAI-Zugang verfügbares Modell einstellen; Standard ist `gpt-4.1-mini`.
+3. In **Writing** für die konkrete Abgabe **Send this task and draft to OpenAI for AI feedback** auswählen.
+
+Ohne diese Auswahl wird kein AI-Aufruf ausgeführt. Bei ausgewähltem AI-Feedback werden die Aufgabenstellung und der Entwurf an OpenAI gesendet; dabei können API-Kosten entstehen. Profil, Datenexport und andere Übungen werden nicht mitgesendet.
+
+Die SDK-Anfragen haben ein Timeout von 20 Sekunden und höchstens einen Retry. Eingaben sind auf 12.000 Zeichen begrenzt; Rückgaben werden auf Struktur, Datentypen und endliche Werte von 0–5 geprüft. Bei fehlendem Key, API-Fehlern oder ungültigen Antworten erscheint automatisch das Offline-Feedback. Fehlermeldungen enthalten keine Credentials.
+
+`.streamlit/secrets.toml.example` ist eine Vorlage mit leerem Key. **Echte API-Keys nie committen.**
+
+## Tests und Codeprüfung
 
 ```bash
-git init
-git add .
-git commit -m "Build B1 Exam Coach Phase 2"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/b1-exam-coach.git
-git push -u origin main
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+ruff check .
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username.
+Die Tests prüfen Aufgabenintegrität, akzeptierte Antworten, SQLite-Persistenz, doppelte Abgaben, konkurrierende Zugriffe, Fehlerauflösung, adaptive Auswahl, genaue Minutenbudgets, Vokabeltermine, Writing-Heuristiken und gemockte AI-Erfolge/-Fehler. Streamlit-AppTests prüfen Seiten und gespeicherte Bedienabläufe mit isolierten temporären Datenbanken. Es sind keine echten API-Keys oder Netzwerkaufrufe für Tests nötig.
 
-# 9. Deploy on Streamlit Community Cloud
+GitHub Actions führt Tests und Codeprüfung bei Push auf `main` und bei Pull Requests für Python 3.11 und 3.12 aus.
 
-1. Sign in to Streamlit Community Cloud with GitHub.
-2. Click **Create app**.
-3. Select your repository.
-4. Branch: `main`.
-5. Main file / entrypoint: `app.py`.
-6. In Advanced settings choose a supported Python version such as Python 3.12.
-7. If you use AI feedback, add the secrets there rather than committing them to GitHub.
-8. Deploy.
-
-Example Streamlit secrets:
-
-```toml
-OPENAI_API_KEY = "your-key-here"
-OPENAI_MODEL = "gpt-5.6-luna"
-```
-
-## Important: progress persistence on Streamlit Community Cloud
-
-The default SQLite database is excellent for local development, but Community Cloud does not guarantee permanent local file storage. For serious daily use on a cloud deployment, configure a persistent PostgreSQL database and add its connection string as:
-
-```toml
-DATABASE_URL = "postgresql+psycopg://USER:PASSWORD@HOST:5432/DATABASE"
-```
-
-If `DATABASE_URL` is absent, the app automatically uses SQLite.
-
-# Project structure
+## Projektstruktur
 
 ```text
-b1-exam-coach/
-├── app.py
-├── components/
-├── database/
-│   ├── db.py
-│   ├── models.py
-│   ├── repositories.py
-│   └── seed.py
-├── pages/
-│   ├── dashboard.py
-│   ├── study_plan.py
-│   ├── reading.py
-│   ├── writing.py
-│   ├── grammar.py
-│   ├── vocabulary.py
-│   ├── mistakes.py
-│   ├── progress.py
-│   └── settings.py
-├── services/
-│   ├── adaptive_service.py
-│   ├── ai_service.py
-│   ├── mistake_service.py
-│   ├── progress_service.py
-│   ├── scoring_service.py
-│   ├── study_plan_service.py
-│   ├── vocab_service.py
-│   └── writing_service.py
-├── tests/
-├── .github/workflows/tests.yml
-├── .streamlit/secrets.toml.example
-├── .env.example
-├── requirements.txt
-└── README.md
+app.py                         # Streamlit-Einstiegspunkt
+components/common.py           # Quiz, Repository-Zugriff, Secret-Lesen
+pages/                         # Neun Seiten
+data/                          # Originalaufgaben und öffentliche Content-API
+database/repository.py         # SQLite-Schema und atomare Speicherung
+services/                      # Adaptive Planung, Scoring, Progress, Writing und AI
+tests/                         # Unit- und Streamlit-Integrationstests
+.streamlit/config.toml          # Theme
+.streamlit/secrets.toml.example # Leere Secret-Vorlage
+.env.example                   # Lokale Konfiguration ohne Key
+requirements.txt               # Laufzeit und pytest
+requirements-dev.txt           # Zusätzliche Codeprüfung
+.github/workflows/tests.yml    # CI
 ```
-
-# How the adaptive logic works
-
-Reading and Grammar topics start with a neutral mastery value. Correct answers increase mastery and wrong answers decrease it. The question selector gives weaker topics more weight, so weaknesses return more often.
-
-`My Mistakes` groups wrong answers by skill and topic and lets the learner start targeted fresh practice for that area.
-
-# Writing feedback
-
-The offline evaluator checks observable signals such as approximate length, structure, linking words and B1-like language features. It cannot reliably judge semantic task completion, so its result is explicitly labelled as a heuristic.
-
-When AI feedback is configured, the app can judge the actual prompt and response more deeply and returns concrete strengths, improvements, missing points, useful phrases, exam tips and an optional improved B1-level version.
-
-# Run tests
-
-```bash
-pytest -q
-```
-
-# Next product phase
-
-Phase 3 should add Listening, Speaking/audio and stronger exam simulation. Phase 4 should add full timed Mock Exams, readiness scoring and more detailed analytics.
